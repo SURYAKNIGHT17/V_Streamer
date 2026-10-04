@@ -201,6 +201,10 @@ The table below documents average and 99th percentile frame encoding times acros
 | **1440p (2560x1440)** | NVENC HEVC (Low-Latency HQ) | **2.94 ms** | **3.88 ms** | **42.1 ms** | 0.00% |
 | **4K UHD (3840x2160)** | NVENC AV1 (CBR Low-Latency) | **4.15 ms** | **5.42 ms** | **58.7 ms** | 0.00% |
 
+<div align="center">
+  <img src="./assets/latency_chart.png" alt="Frame Processing, Encode, and Glass-to-Glass Latency by Codec" width="850"/>
+</div>
+
 ### 2. Memory Consumption (Resident Set Size - RSS)
 Memory footprint was recorded across continuous 60-minute stress runs:
 
@@ -210,23 +214,12 @@ Memory footprint was recorded across continuous 60-minute stress runs:
 | **4K60 Transcode + VCam** | 162.8 MB | 248.5 MB | **268.0 MB** | CUDA Unified Pinned Memory |
 | **Multi-Stream (4x 1080p)** | 210.4 MB | 385.2 MB | **412.6 MB** | Shared Memory IPC Pools |
 
-```
-Resident Set Size (RSS) Progression Over 60 Minutes:
-[MB]
-300 |                                       .------- Peak: 268 MB (4K60)
-250 |                           .-----------'
-200 |              .------------'
-150 |  .-----------' Steady: 138 MB (1080p60)
-100 | -' Baseline: 94 MB
- 50 |
-  0 +------------------------------------------------------> Time (Minutes)
-    0             15            30            45            60
-```
+<div align="center">
+  <img src="./assets/memory_chart.png" alt="Resident Set Size (RSS) Memory Profile Over 60 Minutes" width="850"/>
+</div>
 
-> **Performance Verification Data Artifacts:**
-> - Memory Profiling Graph: `![Memory Usage Graph](./assets/memory_chart.png)`
-> - Frame Latency Distribution: `![Latency Histogram](./assets/latency_chart.png)`
-> - Telemetry Dump: See [`benchmarks/benchmarks.json`](benchmarks/benchmarks.json) for serialized hardware metrics.
+> **Raw Telemetry Metrics:**  
+> Detailed machine-readable JSON benchmarks with P50/P95/P99 latency, dropped frame counts, and GPU VRAM statistics are archived in [`benchmarks/benchmarks.json`](benchmarks/benchmarks.json). Re-run verification using [`python benchmarks/generate_charts.py`](benchmarks/generate_charts.py).
 
 ---
 
