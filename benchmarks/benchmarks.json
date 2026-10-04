@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0.0",
+  "test_metadata": {
+    "suite": "V_Streamer Stress & Latency Benchmark",
+    "timestamp_utc": "2026-10-04T12:00:00Z",
+    "author": "SURYAKNIGHT17",
+    "git_commit": "a3f890b",
+    "environment": {
+      "os": "Ubuntu 22.04.4 LTS (Linux 6.2.0-37-generic x86_64)",
+      "cpu": "AMD Ryzen 9 7900X 12-Core Processor @ 4.70GHz",
+      "gpu": "NVIDIA GeForce RTX 4080 (16376 MiB)",
+      "driver_version": "550.54.14",
+      "cuda_version": "12.4",
+      "compiler": "GCC 11.4.0 / Clang 14.0.0",
+      "ram_total_gb": 31.2
+    }
+  },
+  "benchmarks": [
+    {
+      "profile_name": "1080p60_H264_NVENC",
+      "resolution": { "width": 1920, "height": 1080 },
+      "framerate": 60,
+      "bitrate_kbps": 6000,
+      "codec": "H264_NVENC",
+      "preset": "p4_low_latency_hq",
+      "duration_seconds": 3600,
+      "total_frames_processed": 216000,
+      "frames_dropped": 0,
+      "drop_rate_pct": 0.0,
+      "latency_metrics_ms": {
+        "avg_frame_encode_time": 1.82,
+        "p50_frame_encode_time": 1.74,
+        "p95_frame_encode_time": 2.31,
+        "p99_frame_encode_time": 2.65,
+        "max_frame_encode_time": 3.82,
+        "glass_to_glass_avg": 34.2
+      },
+      "memory_metrics_mb": {
+        "baseline_rss": 94.2,
+        "steady_state_rss": 138.4,
+        "peak_rss": 142.1,
+        "gpu_vram_allocated": 482.0
+      },
+      "throughput_metrics": {
+        "avg_fps": 60.0,
+        "achieved_bitrate_kbps": 5984.2
+      }
+    },
+    {
+      "profile_name": "1080p60_H264_Software",
+      "resolution": { "width": 1920, "height": 1080 },
+      "framerate": 60,
+      "bitrate_kbps": 6000,
+      "codec": "libx264",
+      "preset": "ultrafast",
+      "duration_seconds": 3600,
+      "total_frames_processed": 216000,
+      "frames_dropped": 43,
+      "drop_rate_pct": 0.02,
+      "latency_metrics_ms": {
+        "avg_frame_encode_time": 6.45,
+        "p50_frame_encode_time": 5.92,
+        "p95_frame_encode_time": 9.8,
+        "p99_frame_encode_time": 11.2,
+        "max_frame_encode_time": 18.4,
+        "glass_to_glass_avg": 78.4
+      },
+      "memory_metrics_mb": {
+        "baseline_rss": 88.1,
+        "steady_state_rss": 195.3,
+        "peak_rss": 218.4,
+        "gpu_vram_allocated": 0.0
+      },
+      "throughput_metrics": {
+        "avg_fps": 59.98,
+        "achieved_bitrate_kbps": 5890.1
+      }
+    },
+    {
+      "profile_name": "1440p60_HEVC_NVENC",
+      "resolution": { "width": 2560, "height": 1440 },
+      "framerate": 60,
+      "bitrate_kbps": 12000,
+      "codec": "HEVC_NVENC",
+      "preset": "p4_low_latency_hq",
+      "duration_seconds": 3600,
+      "total_frames_processed": 216000,
+      "frames_dropped": 0,
+      "drop_rate_pct": 0.0,
+      "latency_metrics_ms": {
+        "avg_frame_encode_time": 2.94,
+        "p50_frame_encode_time": 2.81,
+        "p95_frame_encode_time": 3.42,
+        "p99_frame_encode_time": 3.88,
+        "max_frame_encode_time": 4.9,
+        "glass_to_glass_avg": 42.1
+      },
+      "memory_metrics_mb": {
+        "baseline_rss": 112.5,
+        "steady_state_rss": 186.2,
+        "peak_rss": 194.0,
+        "gpu_vram_allocated": 724.0
+      },
+      "throughput_metrics": {
+        "avg_fps": 60.0,
+        "achieved_bitrate_kbps": 11940.5
+      }
+    },
+    {
+      "profile_name": "4K60_AV1_NVENC",
+      "resolution": { "width": 3840, "height": 2160 },
+      "framerate": 60,
+      "bitrate_kbps": 22000,
+      "codec": "AV1_NVENC",
+      "preset": "p4_low_latency_hq",
+      "duration_seconds": 3600,
+      "total_frames_processed": 216000,
+      "frames_dropped": 0,
+      "drop_rate_pct": 0.0,
+      "latency_metrics_ms": {
+        "avg_frame_encode_time": 4.15,
+        "p50_frame_encode_time": 3.98,
+        "p95_frame_encode_time": 4.88,
+        "p99_frame_encode_time": 5.42,
+        "max_frame_encode_time": 7.1,
+        "glass_to_glass_avg": 58.7
+      },
+      "memory_metrics_mb": {
+        "baseline_rss": 162.8,
+        "steady_state_rss": 248.5,
+        "peak_rss": 268.0,
+        "gpu_vram_allocated": 1280.0
+      },
+      "throughput_metrics": {
+        "avg_fps": 60.0,
+        "achieved_bitrate_kbps": 21850.0
+      }
+    }
+  ]
+}
