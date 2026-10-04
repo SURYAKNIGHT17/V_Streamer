@@ -1,0 +1,35 @@
+name: Automated Performance Benchmark
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Weekly Sunday midnight run
+  workflow_dispatch:
+
+jobs:
+  run-benchmarks:
+    name: Execute Benchmark Suite
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Execute 3-Second Verification Benchmark
+        run: |
+          python benchmarks/run_benchmarks.py
+
+      - name: Archive Telemetry Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-telemetry
+          path: benchmarks/benchmarks.json
