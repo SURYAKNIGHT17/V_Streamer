@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "test_metadata": {
+    "suite": "V_Streamer 10-Minute Real Hardware Benchmark",
+    "timestamp_utc": "2026-10-04T13:43:51Z",
+    "author": "SURYAKNIGHT17",
+    "environment": {
+      "os": "Windows (win32)",
+      "cpu": "AMD64 Family 23 Model 24 Stepping 1, AuthenticAMD",
+      "opencv_version": "4.13.0",
+      "python_version": "3.13.3",
+      "ram_total_gb": 5.9
+    }
+  },
+  "results": {
+    "duration_seconds": 814.3,
+    "total_frames_encoded": 18000,
+    "achieved_fps": 22.11,
+    "memory_metrics_mb": {
+      "initial_rss": 67.2,
+      "peak_rss": 98.6,
+      "final_rss": 49.1
+    },
+    "latency_metrics_ms": {
+      "p50_frame_encode_time": 25.95,
+      "p90_frame_encode_time": 43.78,
+      "p95_frame_encode_time": 59.14,
+      "p99_frame_encode_time": 98.93,
+      "avg_frame_encode_time": 29.91
+    }
+  }
+}
