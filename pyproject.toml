@@ -26,3 +26,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/SURYAKNIGHT17/V_Streamer"
 "Bug Tracker" = "https://github.com/SURYAKNIGHT17/V_Streamer/issues"
+
+[tool.setuptools.packages.find]
+where = ["python"]
+

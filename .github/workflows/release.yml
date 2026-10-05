@@ -1,0 +1,147 @@
+name: Build & Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # --------------------------------------------------------------------------
+  # 1. Build C++ Core Static/Dynamic Libraries for Windows & Linux
+  # --------------------------------------------------------------------------
+  build-cpp-binaries:
+    name: Build C++ Core (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: vstreamer-windows-x64
+            archive_ext: zip
+          - os: ubuntu-22.04
+            artifact_name: vstreamer-linux-x64
+            archive_ext: tar.gz
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Linux Build Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build pkg-config libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=OFF -DENABLE_PYTHON_BINDINGS=OFF
+
+      - name: Compile C++ Core
+        run: |
+          cmake --build build --config Release
+
+      - name: Prepare Binary Release Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path package/include/vstreamer -Force
+          Copy-Item -Path "include/*" -Destination "package/include" -Recurse -Force
+          New-Item -ItemType Directory -Path package/lib -Force
+          Get-ChildItem -Path "build" -Recurse -Filter "*.lib" | Copy-Item -Destination "package/lib" -Force
+          Get-ChildItem -Path "build" -Recurse -Filter "*.dll" | Copy-Item -Destination "package/lib" -Force
+          Copy-Item -Path "README.md", "LICENSE" -Destination "package" -Force
+          Compress-Archive -Path "package/*" -DestinationPath "${{ matrix.artifact_name }}.zip"
+
+      - name: Prepare Binary Release Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p package/include package/lib
+          cp -r include/* package/include/
+          find build -name "*.a" -o -name "*.so" | xargs -I {} cp {} package/lib/ || true
+          cp README.md LICENSE package/
+          tar -czvf ${{ matrix.artifact_name }}.tar.gz -C package .
+
+      - name: Upload Binary Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.${{ matrix.archive_ext }}
+
+  # --------------------------------------------------------------------------
+  # 2. Build Python Wheel and Source Distribution
+  # --------------------------------------------------------------------------
+  build-python-package:
+    name: Build Python Wheel (.whl)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Packaging Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build wheel
+
+      - name: Build Wheel and Source Distribution
+        run: |
+          python -m build
+
+      - name: Upload Python Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/*
+
+  # --------------------------------------------------------------------------
+  # 3. Create GitHub Release & Attach Compiled Assets
+  # --------------------------------------------------------------------------
+  create-release:
+    name: Create GitHub Release
+    needs: [build-cpp-binaries, build-python-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Flatten Release Asset Files
+        shell: bash
+        run: |
+          mkdir -p final-assets
+          find release-assets -type f -exec mv -v {} final-assets/ \;
+          ls -la final-assets/
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || inputs.tag_name }}
+          name: Release ${{ github.ref_name || inputs.tag_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            final-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
